@@ -40,19 +40,31 @@ jobs:
 
       - name: Verificar cobertura
         run: |
-            # Buscar el archivo jacoco.xml
-            jacoco_file=./target/site/jacoco/jacoco.xml
-            
-            # Extraer el coverage general del informe JaCoCo
-            coverage=$(awk -F '[<>]' '/<counter type="INSTRUCTION"/{covered=$6; total=$10} END{print covered, total}' "$jacoco_file")
-            coverage_percentage=$(echo "$coverage" | awk '{printf "%.2f\n", $1 / $2 * 100}')
-            echo "Coverage: $coverage_percentage%"
-            
-            # Comprobar si el coverage es inferior al 90%
-            if (( $(awk 'BEGIN {print ("'$coverage_percentage'" < 90) ? 1 : 0}') )); then
-              echo "Coverage es inferior al 90%, el pipeline fallará."
-              exit 1
-            fi
+          # Ruta del archivo jacoco.xml
+          jacoco_file=./target/site/jacoco/jacoco.xml
+          
+          # Extraer el coverage general del informe JaCoCo
+          coverage=$(awk -F '[<>]' '/<counter type="INSTRUCTION"/{covered=$6; total=$10} END{print covered, total}' "$jacoco_file")
+          
+          # Obtener el valor de cobertura y total
+          covered=$(echo "$coverage" | awk '{print $1}')
+          total=$(echo "$coverage" | awk '{print $2}')
+          
+          # Verificar si el total es cero (para evitar la división por cero)
+          if [ "$total" -eq 0 ]; then
+            echo "Error: Total es cero, no se puede calcular la cobertura."
+            exit 1
+          fi
+          
+          # Calcular el porcentaje de cobertura solo si total no es cero
+          coverage_percentage=$(echo "scale=2; $covered / $total * 100" | bc)
+          echo "Coverage: $coverage_percentage%"
+          
+          # Comprobar si el coverage es inferior al 90%
+          if (( $(awk 'BEGIN {print ("'$coverage_percentage'" < 90) ? 1 : 0}') )); then
+            echo "Coverage es inferior al 90%, el pipeline fallará."
+            exit 1
+          fi
 
       - name: Publicar informe JaCoCo
         uses: madrapps/jacoco-report@v1.6.1
