@@ -50,13 +50,13 @@
 				<execution>
 					<id>report</id>
 					<phase>prepare-package</phase>
-					<phase>verify</phase>
 					<goals>
 						<goal>report</goal>
 					</goals>
 				</execution>
 				<execution>
 					<id>jacoco-check</id>
+					<phase>verify</phase>
 					<goals>
 						<goal>check</goal>
 					</goals>
