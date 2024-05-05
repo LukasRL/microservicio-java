@@ -29,6 +29,11 @@ jobs:
         run: |
           mvn package test
 
+      - name: Verificar ubicación del archivo jacoco.xml
+        run: |
+          pwd
+          ls -laR
+
       - name: Generar informe JaCoCo
         run: |
           mvn jacoco:report
