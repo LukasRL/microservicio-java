@@ -32,7 +32,23 @@ jobs:
       - name: Generar informe JaCoCo
         run: |
           mvn jacoco:report
-      
+
+      - name: Verificar cobertura
+        run: |
+            # Buscar el archivo jacoco.xml
+            jacoco_file=${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
+            
+            # Extraer el coverage general del informe JaCoCo
+            coverage=$(awk -F '[<>]' '/<counter type="INSTRUCTION"/{covered=$6; total=$10} END{print covered, total}' "$jacoco_file")
+            coverage_percentage=$(echo "$coverage" | awk '{printf "%.2f\n", $1 / $2 * 100}')
+            echo "Coverage: $coverage_percentage%"
+            
+            # Comprobar si el coverage es inferior al 90%
+            if (( $(awk 'BEGIN {print ("'$coverage_percentage'" < 90) ? 1 : 0}') )); then
+              echo "Coverage es inferior al 90%, el pipeline fallará."
+              exit 1
+            fi
+
       - name: Publicar informe JaCoCo
         uses: madrapps/jacoco-report@v1.6.1
         with:
