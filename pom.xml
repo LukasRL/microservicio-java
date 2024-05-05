@@ -50,6 +50,7 @@
 				<execution>
 					<id>report</id>
 					<phase>prepare-package</phase>
+					<phase>verify</phase>
 					<goals>
 						<goal>report</goal>
 					</goals>
@@ -67,7 +68,7 @@
 								<limit>
 									<counter>LINE</counter>
 									<value>COVEREDRATIO</value>
-									<minimum>0.8</minimum>
+									<minimum>0.9</minimum>
 								</limit>
 							</limits>
 							</rule>
