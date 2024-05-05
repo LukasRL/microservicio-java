@@ -35,8 +35,11 @@ jobs:
       
       - name: Ejecutar verificación de cobertura
         run: |
+          # Buscar el archivo jacoco.xml
+          jacoco_file=$(find ${GITHUB_WORKSPACE} -type f -name "jacoco.xml")
+          
           # Extraer el coverage general del informe JaCoCo
-          coverage=$(awk -F '[<>]' '/<counter type="INSTRUCTION"/{covered=$6; total=$10} END{print covered, total}' ${GITHUB_WORKSPACE}/**/target/site/jacoco/jacoco.xml)
+          coverage=$(awk -F '[<>]' '/<counter type="INSTRUCTION"/{covered=$6; total=$10} END{print covered, total}' "$jacoco_file")
           coverage_percentage=$(echo "$coverage" | awk '{printf "%.2f\n", $1 / $2 * 100}')
           echo "Coverage: $coverage_percentage%"
           
