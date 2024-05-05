@@ -29,10 +29,10 @@ jobs:
         run: |
           mvn package test
 
-      - name: Verificar ubicación del archivo jacoco.xml
-        run: |
-          pwd
-          ls -laR
+      #- name: Verificar ubicación del archivo jacoco.xml
+      #  run: |
+      #    pwd
+      #    ls -laR
 
       - name: Generar informe JaCoCo
         run: |
@@ -41,7 +41,7 @@ jobs:
       - name: Verificar cobertura
         run: |
             # Buscar el archivo jacoco.xml
-            jacoco_file=${{ github.workspace }}/**/target/site/jacoco/jacoco.xml
+            jacoco_file=./target/site/jacoco/jacoco.xml
             
             # Extraer el coverage general del informe JaCoCo
             coverage=$(awk -F '[<>]' '/<counter type="INSTRUCTION"/{covered=$6; total=$10} END{print covered, total}' "$jacoco_file")
