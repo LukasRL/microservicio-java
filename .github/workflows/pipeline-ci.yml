@@ -75,3 +75,15 @@ jobs:
       - name: Docker push
         run: 
           docker push lukasrl/ms-mensaje:lates
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+
+      - name: Clonacion de codigo
+        uses: actions/checkout@v4
+      
+      - name: Despliegue
+        run: |
+          kubectl apply -f deploy.yaml
